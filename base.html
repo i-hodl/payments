@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Page</title>
+  <script src="https://commerce.coinbase.com/v1/checkout.js"></script>
+</head>
+
+<body>
+  <h1>Payment Page</h1>
+  <p>Click the button below to pay $109.99 using Coinbase:</p>
+  <button id="coinbase-button">Pay with Coinbase</button>
+
+  <script>
+    // Reference global variable for API key
+    var apiKey = window.apiKey;
+
+    // Configure checkout with API key
+    var checkout = CoinbaseCommerce.Checkout.configure({
+      apiKey: apiKey,
+      amount: '109.99',
+      currency: 'USD',
+      name: 'iNode',
+      description: '64 GB Base Model iNode',
+      metadata: {
+        'custom': 'us/crypto/base'
+      }
+    });
+
+    // Add event listener to checkout button
+    document.getElementById('coinbase-button').addEventListener('click', function () {
+      checkout.show();
+    });
+  </script>
+</body>
+
+</html>

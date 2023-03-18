@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dropdown Menus</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+<body>
+  <div>
+    <label for="location">Location:</label>
+    <select id="location">
+      <option value="">Select Location</option>
+      <option value="US">US</option>
+      <option value="INTERNATIONAL">International</option>
+    </select>
+  </div>
+  <div>
+    <label for="paymentType">Payment Type:</label>
+    <select id="paymentType">
+      <option value="">Select Payment Type</option>
+      <option value="CARD">Card</option>
+      <option value="CRYPTO">Crypto</option>
+    </select>
+  </div>
+  <div>
+    <label for="model">Model:</label>
+    <select id="model">
+      <option value="">Select Model</option>
+      <option value="64GB">64 GB Base Model 64GB iNode</option>
+      <option value="128GB">128GB iNode</option>
+      <option value="256GB">256 GB iNode</option>
+      <option value="512GB">512GB iNode</option>
+      <option value="1TB">1TB iNode</option>
+    </select>
+  </div>
+  <div id="totalDiv" style="display:none;">
+    <p>Total payment amount due:</p>
+    <p id="totalAmount"></p>
+  </div>
+  <div id="cryptoDiv" style="display:none;">
+    <label for="cryptoType">Select Crypto Type:</label>
+    <select id="cryptoType">
+      <option value="">Select Crypto Type</option>
+      <option value="BTC">BTC</option>
+      <option value="ETH">ETH</option>
+      <option value="LTC">LTC</option>
+    </select>
+    <button id="payButton">Pay</button>
+  </div>
+
+  <script>
+    function calculateTotal() {
+      const locationSelect = document.getElementById('location');
+      const paymentTypeSelect = document.getElementById('paymentType');
+      const modelSelect = document.getElementById('model');
+      const cryptoTypeSelect = document.getElementById('cryptoType');
+
+      $('#totalDiv').toggle(locationSelect.value && paymentTypeSelect.value && modelSelect.value && cryptoTypeSelect.value);
+
+      let modelPrice = 0;
+
+      switch (modelSelect.value) {
+        case '64GB':
+          modelPrice = 100.00;
+          break;
+        case '128GB':
+          modelPrice = 123.45;
+          break;
+        case '256GB':
+          modelPrice = 133.70;
+          break;
+        case '512GB':
+          modelPrice = 177.95;
+          break;
+        case '1TB':
+          modelPrice = 229.99;
+          break;
+      }
+
+      const total = modelPrice * parseFloat(cryptoTypeSelect.value);
+
+      $('#totalAmount').text('$' + total.toFixed(2));
+    }
+
+    function updateHTML() {
+      // Get the HTML elements by their IDs
+      const locationSelect = $('#location');
+      const paymentTypeSelect = $('#paymentType');
+      const modelSelect = $('#model');
+      const cryptoTypeSelect = $('#cryptoType');
+      const totalDiv = $('#totalDiv');
+      const totalAmount = $('#totalAmount');
+      const cryptoDiv = $('#cryptoDiv');
+      const payButton = $('#payButton');
+
+      // Add event listener to each select element
+      locationSelect.change(updateHTML);
+      paymentTypeSelect.change(updateHTML);
+      modelSelect.change(updateHTML);
+      cryptoTypeSelect.change(updateHTML);
+
+      // Retrieve the values of each select element and store them in variables
+      const locationValue = locationSelect.val();
+      const paymentTypeValue = paymentTypeSelect.val();
+      const modelValue = modelSelect.val();
+      const cryptoTypeValue = cryptoTypeSelect.val();
+
+      if (!locationValue || !paymentTypeValue || !modelValue || !cryptoTypeValue) {
+        // Hide the totalDiv element if any select element does not have a value
+        totalDiv.hide();
+      } else {
+        // Show the totalDiv element and update the total amount based on the selected model and crypto type
+        totalDiv.show();
+
+        let modelPrice = 0;
+
+        switch (modelValue) {
+          case '64GB':
+            modelPrice = 100.00;
+            break;
+          case '128GB':
+            modelPrice = 123.45;
+            break;
+          case '256GB':
+            modelPrice = 133.70;
+            break;
+          case '512GB':
+            modelPrice = 177.95;
+            break;
+          case '1TB':
+            modelPrice = 229.99;
+            break;
+        }
+
+        const total = modelPrice * parseFloat(cryptoTypeValue);
+
+        totalAmount.text('$' + total.toFixed(2));
+      }
+
+      if (paymentTypeValue === 'CRYPTO') {
+        // Display the cryptoDiv element and hide the payButton element if the payment type is crypto
+        cryptoDiv.show();
+        payButton.hide();
+      } else {
+        // Hide the cryptoDiv element and show the payButton element otherwise
+        cryptoDiv.hide();
+        payButton.show();
+      }
+    }
+
+    $(document).ready(function() {
+      // Call the updateHTML function to update the HTML on page load
+      updateHTML();
+    });
+
+    $('#location, #paymentType, #model, #cryptoType').change(function() {
+      calculateTotal();
+    });
+
+    $('#payButton').click(function() {
+      const modelSelect = document.getElementById('model');
+      const cryptoTypeSelect = document.getElementById('cryptoType');
+      const description = modelSelect.value + ' (' + cryptoTypeSelect.value + ')';
+      const amount = parseFloat($('#totalAmount').text().substr(1)); // remove $ sign from total amount
+      const currency = cryptoTypeSelect.value;
+      
+      // Call Coinbase Commerce API to create invoice with amount and currency
+      // Code to create Coinbase Commerce API invoice here...
+      alert('Creating invoice for ' + description + '...');
+    });
+
+    $('#nextButton').click(function() {
+      const totalDiv = $('#totalDiv');
+
+      if (totalDiv.is(':visible')) {
+        if ($('#paymentType').val() === 'CRYPTO') {
+          $('#cryptoDiv').show();
+        } else {
+          const locationSelect = document.getElementById('location');
+          const paymentTypeSelect = document.getElementById('paymentType');
+          const modelSelect = document.getElementById('model');
+          const url = `https://h0dl.xyz/${locationSelect.value.toLowerCase()}/${paymentTypeSelect.value.toLowerCase()}/${modelSelect.value.toLowerCase()}`;
+          window.location.href = url;
+        }
+      } else {
+        alert('Please select location, payment type, model, and crypto type.');
+      }
+    });
+  </script>
+</body>
+
+</html>
